@@ -1,5 +1,5 @@
 Name:           mod_wsgi
-Version:        1.0
+Version:        1.3
 Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jan 05 2008 James Bowes <jbowes@redhat.com> 1.3-1
+- Update to 1.3
+
 * Sun Sep 30 2007 James Bowes <jbowes@redhat.com> 1.0-1
 - Initial packaging for Fedora
 
