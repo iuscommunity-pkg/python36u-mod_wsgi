@@ -1,6 +1,6 @@
 Name:           mod_wsgi
 Version:        1.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -9,6 +9,8 @@ URL:            http://modwsgi.org
 Source0:        http://modwsgi.googlecode.com/files/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+Requires:       httpd-devel
 
 BuildRequires:  httpd-devel
 BuildRequires:  python-devel
@@ -51,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Jan 06 2008 James Bowes <jbowes@redhat.com> 1.3-2
+- Require httpd
+
 * Sat Jan 05 2008 James Bowes <jbowes@redhat.com> 1.3-1
 - Update to 1.3
 
