@@ -1,6 +1,6 @@
 Name:           mod_wsgi
 Version:        1.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 1.3-3
+- Autorebuild for GCC 4.3
+
 * Sun Jan 06 2008 James Bowes <jbowes@redhat.com> 1.3-2
 - Require httpd
 
