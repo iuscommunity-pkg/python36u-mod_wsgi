@@ -1,6 +1,6 @@
 Name:           mod_wsgi
 Version:        1.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -30,7 +30,7 @@ existing WSGI adapters for mod_python or CGI.
 
 %build
 %configure
-make %{?_smp_mflags}
+make LDFLAGS="-L%{_libdir}" %{?_smp_mflags}
 
 
 %install
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jun 16 2008 Ricky Zhou <ricky@fedoraproject.org> 1.3-4
+- Build against the shared python lib.
+
 * Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 1.3-3
 - Autorebuild for GCC 4.3
 
