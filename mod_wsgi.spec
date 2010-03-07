@@ -1,6 +1,6 @@
 Name:           mod_wsgi
-Version:        2.5
-Release:        2%{?dist}
+Version:        3.1
+Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -13,6 +13,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  httpd-devel
 BuildRequires:  python-devel
 
+Conflicts:      mod_python < 3.3.1
 
 %description
 The mod_wsgi adapter is an Apache module that provides a WSGI compliant
@@ -27,7 +28,7 @@ existing WSGI adapters for mod_python or CGI.
 
 
 %build
-%configure
+%configure --enable-shared
 make LDFLAGS="-L%{_libdir}" %{?_smp_mflags}
 
 
@@ -51,6 +52,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Mar 07 2010 Josh Kayse <joshkayse@fedoraproject.org> - 3.1-1
+- update to 3.1
+- add explicit enable-shared
+- add conflicts mod_python < 3.3.1
+
 * Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.5-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
