@@ -1,6 +1,6 @@
 Name:           mod_wsgi
 Version:        3.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
 * Tue Nov 01 2011 James Bowes <jbowes@redhat.com> 3.3-1
 - update to 3.3
 
