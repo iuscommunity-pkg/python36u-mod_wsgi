@@ -1,6 +1,10 @@
+
+%{!?_httpd_apxs: %{expand: %%global _httpd_apxs %%{_sbindir}/apxs}}
+%{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn || echo missing-httpd-devel)}}
+
 Name:           mod_wsgi
 Version:        3.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -8,10 +12,12 @@ License:        ASL 2.0
 URL:            http://modwsgi.org
 Source0:        http://modwsgi.googlecode.com/files/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
+Patch0:         mod_wsgi-3.3-httpd24.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  httpd-devel
 BuildRequires:  python-devel
+Requires: httpd-mmn = %{_httpd_mmn}
 
 %description
 The mod_wsgi adapter is an Apache module that provides a WSGI compliant
@@ -23,10 +29,10 @@ existing WSGI adapters for mod_python or CGI.
 
 %prep
 %setup -q
-
+%patch0 -p1 -b .httpd24
 
 %build
-%configure --enable-shared
+%configure --enable-shared --with-apxs=%{_httpd_apxs}
 make LDFLAGS="-L%{_libdir}" %{?_smp_mflags}
 
 
@@ -50,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Mar 13 2012 Joe Orton <jorton@redhat.com> - 3.3-3
+- prepare for httpd 2.4.x
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
