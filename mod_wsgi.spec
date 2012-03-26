@@ -4,7 +4,7 @@
 
 Name:           mod_wsgi
 Version:        3.3
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -40,8 +40,8 @@ make LDFLAGS="-L%{_libdir}" %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
-install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/
+install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
+install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 
 
 %clean
@@ -51,11 +51,14 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc LICENCE README
-%config(noreplace) %{_sysconfdir}/httpd/conf.d/wsgi.conf
+%config(noreplace) %{_httpd_modconfdir}/*.conf
 %{_libdir}/httpd/modules/mod_wsgi.so
 
 
 %changelog
+* Mon Mar 26 2012 Joe Orton <jorton@redhat.com> - 3.3-5
+- move wsgi.conf to conf.modules.d
+
 * Mon Mar 26 2012 Joe Orton <jorton@redhat.com> - 3.3-4
 - rebuild for httpd 2.4
 
