@@ -4,7 +4,7 @@
 
 Name:           mod_wsgi
 Version:        3.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Mar 26 2012 Joe Orton <jorton@redhat.com> - 3.3-4
+- rebuild for httpd 2.4
+
 * Tue Mar 13 2012 Joe Orton <jorton@redhat.com> - 3.3-3
 - prepare for httpd 2.4.x
 
