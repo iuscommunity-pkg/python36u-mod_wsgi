@@ -1,3 +1,5 @@
 mod_wsgi-3.2.tar.gz
 /mod_wsgi-3.3.tar.gz
 /mod_wsgi-?.?
+/results_mod_wsgi/
+/clog
