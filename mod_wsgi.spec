@@ -6,7 +6,7 @@
 
 Name:           mod_wsgi
 Version:        3.3
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jun 13 2012 Joe Orton <jorton@redhat.com> - 3.3-6
+- add possible fix for daemon mode crash (#831701)
+
 * Mon Mar 26 2012 Joe Orton <jorton@redhat.com> - 3.3-5
 - move wsgi.conf to conf.modules.d
 
