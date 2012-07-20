@@ -6,7 +6,7 @@
 
 Name:           mod_wsgi
 Version:        3.3
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.3-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Wed Jun 13 2012 Joe Orton <jorton@redhat.com> - 3.3-6
 - add possible fix for daemon mode crash (#831701)
 
