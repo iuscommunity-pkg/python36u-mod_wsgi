@@ -5,8 +5,8 @@
 %{!?_httpd_modconfdir: %{expand: %%global _httpd_modconfdir %%{_sysconfdir}/httpd/conf.d}}
 
 Name:           mod_wsgi
-Version:        3.3
-Release:        7%{?dist}
+Version:        3.4
+Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -14,7 +14,6 @@ License:        ASL 2.0
 URL:            http://modwsgi.org
 Source0:        http://modwsgi.googlecode.com/files/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
-Patch0:         mod_wsgi-3.3-httpd24.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  httpd-devel
@@ -31,7 +30,6 @@ existing WSGI adapters for mod_python or CGI.
 
 %prep
 %setup -q
-%patch0 -p1 -b .httpd24
 
 %build
 %configure --enable-shared --with-apxs=%{_httpd_apxs}
@@ -62,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Oct 15 2012 Matthias Runge <mrunge@redhat.com> - 3.4-1
+- update to upstream release 3.4
+
 * Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.3-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
