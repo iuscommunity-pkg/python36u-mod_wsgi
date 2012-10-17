@@ -6,7 +6,7 @@
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -16,10 +16,10 @@ Source0:        http://modwsgi.googlecode.com/files/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
 Patch0:         mod_wsgi-3.4-connsbh.patch
 Patch1:         mod_wsgi-3.4-procexit.patch
+Patch2:         mod_wsgi-3.4-coredump.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  httpd-devel
-BuildRequires:  python-devel
+BuildRequires:  httpd-devel, python-devel, autoconf
 Requires: httpd-mmn = %{_httpd_mmn}
 
 %description
@@ -34,8 +34,10 @@ existing WSGI adapters for mod_python or CGI.
 %setup -q
 %patch0 -p1 -b .connsbh
 %patch1 -p1 -b .procexit
+%patch2 -p1 -b .coredump
 
 %build
+autoconf
 export LDFLAGS="$RPM_LD_FLAGS -L%{_libdir}"
 %configure --enable-shared --with-apxs=%{_httpd_apxs}
 make %{?_smp_mflags}
@@ -65,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Oct 17 2012 Joe Orton <jorton@redhat.com> - 3.4-4
+- enable PR_SET_DUMPABLE in daemon process to enable core dumps
+
 * Wed Oct 17 2012 Joe Orton <jorton@redhat.com> - 3.4-3
 - use a NULL c->sbh pointer with httpd 2.4 (possible fix for #867276)
 - add logging for unexpected daemon process loss
