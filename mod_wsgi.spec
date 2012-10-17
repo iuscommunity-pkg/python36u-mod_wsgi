@@ -6,7 +6,7 @@
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -32,8 +32,9 @@ existing WSGI adapters for mod_python or CGI.
 %setup -q
 
 %build
+export LDFLAGS="$RPM_LD_FLAGS -L%{_libdir}"
 %configure --enable-shared --with-apxs=%{_httpd_apxs}
-make LDFLAGS="-L%{_libdir}" %{?_smp_mflags}
+make %{?_smp_mflags}
 
 
 %install
@@ -60,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Oct 17 2012 Matthias Runge <mrunge@redhat.com> - 3.4-2
+- also use RPM_LD_FLAGS for build bz. #867137
+
 * Mon Oct 15 2012 Matthias Runge <mrunge@redhat.com> - 3.4-1
 - update to upstream release 3.4
 
