@@ -6,7 +6,7 @@
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 
 Group:          System Environment/Libraries
@@ -14,6 +14,8 @@ License:        ASL 2.0
 URL:            http://modwsgi.org
 Source0:        http://modwsgi.googlecode.com/files/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
+Patch0:         mod_wsgi-3.4-connsbh.patch
+Patch1:         mod_wsgi-3.4-procexit.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  httpd-devel
@@ -30,6 +32,8 @@ existing WSGI adapters for mod_python or CGI.
 
 %prep
 %setup -q
+%patch0 -p1 -b .connsbh
+%patch1 -p1 -b .procexit
 
 %build
 export LDFLAGS="$RPM_LD_FLAGS -L%{_libdir}"
@@ -61,6 +65,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Oct 17 2012 Joe Orton <jorton@redhat.com> - 3.4-3
+- use a NULL c->sbh pointer with httpd 2.4 (possible fix for #867276)
+- add logging for unexpected daemon process loss
+
 * Wed Oct 17 2012 Matthias Runge <mrunge@redhat.com> - 3.4-2
 - also use RPM_LD_FLAGS for build bz. #867137
 
