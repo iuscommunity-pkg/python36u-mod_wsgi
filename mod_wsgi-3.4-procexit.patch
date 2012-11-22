@@ -1,3 +1,8 @@
+
+Log exit status in daemon manager; improves diagnosics.
+
+http://code.google.com/p/modwsgi/source/detail?path=/mod_wsgi.c&name=mod_wsgi-3.X&r=b4f55d756fa816a7eae0f7edc13d5f2da3f3d5c1
+
 --- mod_wsgi-3.3/mod_wsgi.c.procexit
 +++ mod_wsgi-3.3/mod_wsgi.c
 @@ -9845,6 +9845,20 @@ static void wsgi_manage_process(int reas

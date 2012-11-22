@@ -3,12 +3,12 @@
 %{!?_httpd_confdir:    %{expand: %%global _httpd_confdir    %%{_sysconfdir}/httpd/conf.d}}
 # /etc/httpd/conf.d with httpd < 2.4 and defined as /etc/httpd/conf.modules.d with httpd >= 2.4
 %{!?_httpd_modconfdir: %{expand: %%global _httpd_modconfdir %%{_sysconfdir}/httpd/conf.d}}
+%{!?_httpd_moddir:    %{expand: %%global _httpd_moddir    %%{_libdir}/httpd/modules}}
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
-
 Group:          System Environment/Libraries
 License:        ASL 2.0
 URL:            http://modwsgi.org
@@ -18,9 +18,12 @@ Patch0:         mod_wsgi-3.4-connsbh.patch
 Patch1:         mod_wsgi-3.4-procexit.patch
 Patch2:         mod_wsgi-3.4-coredump.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
 BuildRequires:  httpd-devel, python-devel, autoconf
 Requires: httpd-mmn = %{_httpd_mmn}
+
+# Suppress auto-provides for module DSO
+%{?filter_provides_in: %filter_provides_in %{_libdir}/httpd/modules/.*\.so$}
+%{?filter_setup}
 
 %description
 The mod_wsgi adapter is an Apache module that provides a WSGI compliant
@@ -37,6 +40,7 @@ existing WSGI adapters for mod_python or CGI.
 %patch2 -p1 -b .coredump
 
 %build
+# Regenerate configure for -coredump patch change to configure.in
 autoconf
 export LDFLAGS="$RPM_LD_FLAGS -L%{_libdir}"
 %configure --enable-shared --with-apxs=%{_httpd_apxs}
@@ -67,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 22 2012 Joe Orton <jorton@redhat.com> - 3.4-5
+- spec file cleanups
+
 * Wed Oct 17 2012 Joe Orton <jorton@redhat.com> - 3.4-4
 - enable PR_SET_DUMPABLE in daemon process to enable core dumps
 
