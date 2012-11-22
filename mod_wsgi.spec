@@ -7,7 +7,7 @@
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -22,7 +22,7 @@ BuildRequires:  httpd-devel, python-devel, autoconf
 Requires: httpd-mmn = %{_httpd_mmn}
 
 # Suppress auto-provides for module DSO
-%{?filter_provides_in: %filter_provides_in %{_libdir}/httpd/modules/.*\.so$}
+%{?filter_provides_in: %filter_provides_in %{_httpd_moddir}/.*\.so$}
 %{?filter_setup}
 
 %description
@@ -49,7 +49,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
 
 install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
 %if "%{_httpd_modconfdir}" == "%{_httpd_confdir}"
@@ -67,10 +67,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENCE README
 %config(noreplace) %{_httpd_modconfdir}/*.conf
-%{_libdir}/httpd/modules/mod_wsgi.so
+%{_httpd_moddir}/mod_wsgi.so
 
 
 %changelog
+* Thu Nov 22 2012 Joe Orton <jorton@redhat.com> - 3.4-6
+- use _httpd_moddir macro
+
 * Thu Nov 22 2012 Joe Orton <jorton@redhat.com> - 3.4-5
 - spec file cleanups
 
