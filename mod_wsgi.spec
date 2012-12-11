@@ -7,7 +7,7 @@
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -43,6 +43,7 @@ existing WSGI adapters for mod_python or CGI.
 # Regenerate configure for -coredump patch change to configure.in
 autoconf
 export LDFLAGS="$RPM_LD_FLAGS -L%{_libdir}"
+export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 %configure --enable-shared --with-apxs=%{_httpd_apxs}
 make %{?_smp_mflags}
 
@@ -71,6 +72,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Dec 11 2012 Jan Kaluza <jkaluza@redhat.com> - 3.4-7
+- compile with -fno-strict-aliasing to workaround Python
+  bug http://www.python.org/dev/peps/pep-3123/
+
 * Thu Nov 22 2012 Joe Orton <jorton@redhat.com> - 3.4-6
 - use _httpd_moddir macro
 
