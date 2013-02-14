@@ -7,7 +7,7 @@
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -72,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.4-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
 * Tue Dec 11 2012 Jan Kaluza <jkaluza@redhat.com> - 3.4-7
 - compile with -fno-strict-aliasing to workaround Python
   bug http://www.python.org/dev/peps/pep-3123/
