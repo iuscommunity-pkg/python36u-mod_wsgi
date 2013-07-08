@@ -1,5 +1,5 @@
 %{!?_httpd_apxs: %{expand: %%global _httpd_apxs %%{_sbindir}/apxs}}
-%{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn || echo missing-httpd-devel)}}
+%{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo missing-httpd-devel)}}
 %{!?_httpd_confdir:    %{expand: %%global _httpd_confdir    %%{_sysconfdir}/httpd/conf.d}}
 # /etc/httpd/conf.d with httpd < 2.4 and defined as /etc/httpd/conf.modules.d with httpd >= 2.4
 %{!?_httpd_modconfdir: %{expand: %%global _httpd_modconfdir %%{_sysconfdir}/httpd/conf.d}}
@@ -7,7 +7,7 @@
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -17,9 +17,8 @@ Source1:        wsgi.conf
 Patch0:         mod_wsgi-3.4-connsbh.patch
 Patch1:         mod_wsgi-3.4-procexit.patch
 Patch2:         mod_wsgi-3.4-coredump.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  httpd-devel, python-devel, autoconf
-Requires: httpd-mmn = %{_httpd_mmn}
+Requires:       httpd-mmn = %{_httpd_mmn}
 
 # Suppress auto-provides for module DSO
 %{?filter_provides_in: %filter_provides_in %{_httpd_moddir}/.*\.so$}
@@ -47,9 +46,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 %configure --enable-shared --with-apxs=%{_httpd_apxs}
 make %{?_smp_mflags}
 
-
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
 
 install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
@@ -61,17 +58,15 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_confdir}/wsgi.conf
 install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
-%defattr(-,root,root,-)
 %doc LICENCE README
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 %{_httpd_moddir}/mod_wsgi.so
 
-
 %changelog
+* Mon Jul  8 2013 Joe Orton <jorton@redhat.com> - 3.4-9
+- modernize spec file (thanks to rcollet)
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.4-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
