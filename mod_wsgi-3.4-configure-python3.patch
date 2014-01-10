@@ -1,0 +1,20 @@
+--- python3-mod_wsgi-3.4-11.fc21/configure.ac.orig	2013-11-28 13:50:26.969440552 +0100
++++ python3-mod_wsgi-3.4-11.fc21/configure.ac	2013-11-28 13:50:46.879414776 +0100
+@@ -104,7 +104,7 @@ PYTHONLIBDIR=`${PYTHON} -c 'from sys imp
+ PYTHONCFGDIR=`${PYTHON} -c 'from sys import stdout; \
+     import distutils.sysconfig; \
+     stdout.write(distutils.sysconfig.get_python_lib(plat_specific=1, \
+-    standard_lib=1) +"/config")'`
++    standard_lib=1))'`
+ PYTHONFRAMEWORKDIR=`${PYTHON} -c 'from sys import stdout; \
+     from distutils import sysconfig; \
+     stdout.write(sysconfig.get_config_var("PYTHONFRAMEWORKDIR"))'`
+@@ -120,7 +120,7 @@ if test "${PYTHONFRAMEWORKDIR}" = "no-fr
+     LDFLAGS1="-L${PYTHONLIBDIR}"
+     LDFLAGS2="-L${PYTHONCFGDIR}"
+ 
+-    LDLIBS1="-lpython${PYTHON_VERSION}"
++    LDLIBS1="-lpython${PYTHON_VERSION}m"
+     LDLIBS2=`${PYTHON} -c 'from sys import stdout; \
+         from distutils import sysconfig; \
+         stdout.write(sysconfig.get_config_var("LIBS"))'`

@@ -5,24 +5,53 @@
 %{!?_httpd_modconfdir: %{expand: %%global _httpd_modconfdir %%{_sysconfdir}/httpd/conf.d}}
 %{!?_httpd_moddir:    %{expand: %%global _httpd_moddir    %%{_libdir}/httpd/modules}}
 
+%if 0%{?fedora} > 12
+%global with_python3 1
+%else
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
+%endif
+
+
 Name:           mod_wsgi
 Version:        3.4
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
 URL:            http://modwsgi.org
 Source0:        http://modwsgi.googlecode.com/files/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
+Source2:        wsgi-python3.conf
 Patch0:         mod_wsgi-3.4-connsbh.patch
 Patch1:         mod_wsgi-3.4-procexit.patch
 Patch2:         mod_wsgi-3.4-coredump.patch
+Patch3:         mod_wsgi-3.4-configure-python3.patch
+
 BuildRequires:  httpd-devel, python-devel, autoconf
+%if 0%{?with_python3}
+BuildRequires:  python3-devel
+%endif
 Requires:       httpd-mmn = %{_httpd_mmn}
 
 # Suppress auto-provides for module DSO
 %{?filter_provides_in: %filter_provides_in %{_httpd_moddir}/.*\.so$}
 %{?filter_setup}
+
+
+%if 0%{?with_python3}
+%package -n python3-%{name}
+Summary:        A WSGI interface for Python3 web applications in Apache
+Group:          System Environment/Libraries
+Requires:       httpd-mmn = %{_httpd_mmn}
+Conflicts:      %{name}
+
+%description -n python3-%{name}
+The mod_wsgi adapter is an Apacheache module that provides a WSGI compliant
+interface for hosting Python based web applications within Apache. The
+adapter is writtentten completely in C code against the Apache C runtime and
+for hosting WSGI applications within Apache has a lower overhead than using
+existing WSGI adapters for mod_python or CGI.
+%endif
 
 %description
 The mod_wsgi adapter is an Apache module that provides a WSGI compliant
@@ -38,6 +67,15 @@ existing WSGI adapters for mod_python or CGI.
 %patch1 -p1 -b .procexit
 %patch2 -p1 -b .coredump
 
+
+
+%if 0%{?with_python3}
+cp -a . %{py3dir}
+pushd %{py3dir}
+%patch3 -p1 -b .python3
+popd
+%endif
+
 %build
 # Regenerate configure for -coredump patch change to configure.in
 autoconf
@@ -46,7 +84,33 @@ export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 %configure --enable-shared --with-apxs=%{_httpd_apxs}
 make %{?_smp_mflags}
 
+%if 0%{?with_python3}
+pushd %{py3dir}
+# Regenerate configure for -coredump patch change to configure.in
+autoconf
+%configure --enable-shared --with-apxs=%{_httpd_apxs} --with-python=python3
+make %{?_smp_mflags}
+popd
+%endif
+
 %install
+# first install python3 variant and rename the so file
+%if 0%{?with_python3}
+pushd %{py3dir}
+make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
+mv  $RPM_BUILD_ROOT%{_httpd_moddir}/mod_wsgi{,_python3}.so
+
+install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
+%if "%{_httpd_modconfdir}" == "%{_httpd_confdir}"
+# httpd <= 2.2.x
+install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_httpd_confdir}/wsgi-python3.conf
+%else
+# httpd >= 2.4.x
+install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi-python3.conf
+%endif
+popd
+%endif
+
 make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
 
 install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
@@ -60,8 +124,20 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 
 %files
 %doc LICENCE README
-%config(noreplace) %{_httpd_modconfdir}/*.conf
+%config(noreplace) %{_httpd_modconfdir}/*wsgi.conf
 %{_httpd_moddir}/mod_wsgi.so
+
+%if 0%{?with_python3}
+%files -n python3-%{name}
+%doc LICENCE README
+%config(noreplace) %{_httpd_modconfdir}/*wsgi-python3.conf
+%{_httpd_moddir}/mod_wsgi_python3.so
+%endif
+
+%changelog
+* Fri Jan 10 2014 Matthias Runge <mrunge@redhat.com> - 3.4-11
+- added python3 subpackage (thanks to Jakub Dorňák), rhbz#1035876
+
 
 %changelog
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.4-10
