@@ -1,5 +1,5 @@
 %{!?_httpd_apxs: %{expand: %%global _httpd_apxs %%{_sbindir}/apxs}}
-%{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo missing-httpd-devel)}}
+%{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo 0-0)}}
 %{!?_httpd_confdir:    %{expand: %%global _httpd_confdir    %%{_sysconfdir}/httpd/conf.d}}
 # /etc/httpd/conf.d with httpd < 2.4 and defined as /etc/httpd/conf.modules.d with httpd >= 2.4
 %{!?_httpd_modconfdir: %{expand: %%global _httpd_modconfdir %%{_sysconfdir}/httpd/conf.d}}
@@ -14,7 +14,7 @@
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -135,6 +135,9 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Thu Jan 23 2014 Joe Orton <jorton@redhat.com> - 3.4-12
+- fix _httpd_mmn expansion in absence of httpd-devel
+
 * Fri Jan 10 2014 Matthias Runge <mrunge@redhat.com> - 3.4-11
 - added python3 subpackage (thanks to Jakub Dorňák), rhbz#1035876
 
