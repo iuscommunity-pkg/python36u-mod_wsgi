@@ -141,8 +141,6 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 * Fri Jan 10 2014 Matthias Runge <mrunge@redhat.com> - 3.4-11
 - added python3 subpackage (thanks to Jakub Dorňák), rhbz#1035876
 
-
-%changelog
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.4-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
