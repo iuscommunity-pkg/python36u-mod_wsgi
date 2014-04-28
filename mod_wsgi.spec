@@ -14,7 +14,7 @@
 
 Name:           mod_wsgi
 Version:        3.4
-Release:        12%{?dist}
+Release:        13%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -43,7 +43,6 @@ Requires:       httpd-mmn = %{_httpd_mmn}
 Summary:        A WSGI interface for Python3 web applications in Apache
 Group:          System Environment/Libraries
 Requires:       httpd-mmn = %{_httpd_mmn}
-Conflicts:      %{name}
 
 %description -n python3-%{name}
 The mod_wsgi adapter is an Apacheache module that provides a WSGI compliant
@@ -135,6 +134,9 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Mon Apr 28 2014 Matthias Runge <mrunge@redhat.com> - 3.4.13
+- do not use conflicts between mod_wsgi packages (rhbz#1087943)
+
 * Thu Jan 23 2014 Joe Orton <jorton@redhat.com> - 3.4-12
 - fix _httpd_mmn expansion in absence of httpd-devel
 
