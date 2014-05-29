@@ -11,6 +11,9 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 %endif
 
+# https://github.com/GrahamDumpleton/mod_wsgi/releases/tag/3.5
+%global commit d9d5fea585b23991f76532a9b07de7fcd3b649f4
+%global shortcommit %(c=%{commit}; echo ${c:0:7})
 
 Name:           mod_wsgi
 Version:        3.5
@@ -19,7 +22,7 @@ Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
 URL:            http://modwsgi.org
-Source0:        http://modwsgi.googlecode.com/files/%{name}-%{version}.tar.gz
+Source0:        https://github.com/GrahamDumpleton/%{name}/archive/%{commit}/%{name}-%{commit}.tar.gz
 Source1:        wsgi.conf
 Source2:        wsgi-python3.conf
 
@@ -57,7 +60,7 @@ existing WSGI adapters for mod_python or CGI.
 
 
 %prep
-%setup -q
+%setup -qn %{name}-%{commit}
 
 %if 0%{?with_python3}
 cp -a . %{py3dir}
@@ -121,6 +124,7 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 * Thu May 29 2014 Luke Macken <lmacken@redhat.com> - 3.5-1
 - Update to 3.5 to fix CVE-2014-0240 (#1101863)
 - Remove all of the patches, which have been applied upstream
+- Update source URL for new the GitHub upstream
 
 * Wed May 28 2014 Joe Orton <jorton@redhat.com> - 3.4-14
 - rebuild for Python 3.4
