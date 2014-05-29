@@ -22,10 +22,6 @@ URL:            http://modwsgi.org
 Source0:        http://modwsgi.googlecode.com/files/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
 Source2:        wsgi-python3.conf
-Patch0:         mod_wsgi-3.4-connsbh.patch
-Patch1:         mod_wsgi-3.4-procexit.patch
-Patch2:         mod_wsgi-3.4-coredump.patch
-Patch3:         mod_wsgi-3.4-configure-python3.patch
 
 BuildRequires:  httpd-devel, python-devel, autoconf
 %if 0%{?with_python3}
@@ -62,22 +58,12 @@ existing WSGI adapters for mod_python or CGI.
 
 %prep
 %setup -q
-%patch0 -p1 -b .connsbh
-%patch1 -p1 -b .procexit
-%patch2 -p1 -b .coredump
-
-
 
 %if 0%{?with_python3}
 cp -a . %{py3dir}
-pushd %{py3dir}
-%patch3 -p1 -b .python3
-popd
 %endif
 
 %build
-# Regenerate configure for -coredump patch change to configure.in
-autoconf
 export LDFLAGS="$RPM_LD_FLAGS -L%{_libdir}"
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 %configure --enable-shared --with-apxs=%{_httpd_apxs}
@@ -85,8 +71,6 @@ make %{?_smp_mflags}
 
 %if 0%{?with_python3}
 pushd %{py3dir}
-# Regenerate configure for -coredump patch change to configure.in
-autoconf
 %configure --enable-shared --with-apxs=%{_httpd_apxs} --with-python=python3
 make %{?_smp_mflags}
 popd
@@ -136,6 +120,7 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %changelog
 * Thu May 29 2014 Luke Macken <lmacken@redhat.com> - 3.5-1
 - Update to 3.5 to fix CVE-2014-0240 (#1101863)
+- Remove all of the patches, which have been applied upstream
 
 * Wed May 28 2014 Joe Orton <jorton@redhat.com> - 3.4-14
 - rebuild for Python 3.4
