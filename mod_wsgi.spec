@@ -13,8 +13,8 @@
 
 
 Name:           mod_wsgi
-Version:        3.4
-Release:        14%{?dist}
+Version:        3.5
+Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -134,6 +134,9 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Thu May 29 2014 Luke Macken <lmacken@redhat.com> - 3.5-1
+- Update to 3.5 to fix CVE-2014-0240 (#1101863)
+
 * Wed May 28 2014 Joe Orton <jorton@redhat.com> - 3.4-14
 - rebuild for Python 3.4
 
