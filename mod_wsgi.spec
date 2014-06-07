@@ -17,7 +17,7 @@
 
 Name:           mod_wsgi
 Version:        3.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -121,6 +121,9 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.5-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Thu May 29 2014 Luke Macken <lmacken@redhat.com> - 3.5-1
 - Update to 3.5 to fix CVE-2014-0240 (#1101863)
 - Remove all of the patches, which have been applied upstream
