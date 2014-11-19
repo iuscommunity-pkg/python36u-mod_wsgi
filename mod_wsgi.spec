@@ -11,18 +11,14 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 %endif
 
-# https://github.com/GrahamDumpleton/mod_wsgi/releases/tag/3.5
-%global commit d9d5fea585b23991f76532a9b07de7fcd3b649f4
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
-
 Name:           mod_wsgi
-Version:        3.5
-Release:        3%{?dist}
+Version:        4.3.2
+Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
 URL:            http://modwsgi.org
-Source0:        https://github.com/GrahamDumpleton/%{name}/archive/%{commit}/%{name}-%{commit}.tar.gz
+Source0:        https://github.com/GrahamDumpleton/%{name}/archive/%{version}.tar.gz
 Source1:        wsgi.conf
 Source2:        wsgi-python3.conf
 
@@ -60,7 +56,7 @@ existing WSGI adapters for mod_python or CGI.
 
 
 %prep
-%setup -qn %{name}-%{commit}
+%setup -qn %{name}-%{version}
 
 %if 0%{?with_python3}
 cp -a . %{py3dir}
@@ -109,18 +105,21 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %files
-%doc LICENCE README
+%doc LICENSE README.rst
 %config(noreplace) %{_httpd_modconfdir}/*wsgi.conf
 %{_httpd_moddir}/mod_wsgi.so
 
 %if 0%{?with_python3}
 %files -n python3-%{name}
-%doc LICENCE README
+%doc LICENSE README.rst
 %config(noreplace) %{_httpd_modconfdir}/*wsgi-python3.conf
 %{_httpd_moddir}/mod_wsgi_python3.so
 %endif
 
 %changelog
+* Wed Nov 19 2014 Jan Kaluza <jkaluza@redhat.com> - 4.3.2-1
+- update to new upstream version 4.3.2 (#1104526)
+
 * Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.5-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
