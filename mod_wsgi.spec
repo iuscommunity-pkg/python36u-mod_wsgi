@@ -18,7 +18,7 @@ Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
 URL:            http://modwsgi.org
-Source0:        https://github.com/GrahamDumpleton/%{name}/archive/%{version}.tar.gz
+Source0:        http://github.srcurl.net/GrahamDumpleton/%{name}/%{version}/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
 Source2:        wsgi-python3.conf
 
