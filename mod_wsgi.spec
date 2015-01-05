@@ -12,7 +12,7 @@
 %endif
 
 Name:           mod_wsgi
-Version:        4.4.1
+Version:        4.4.3
 Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
@@ -117,6 +117,9 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Mon Jan  5 2015 Jakub Dorňák <jdornak@redhat.com> - 4.4.3-1
+- update to new upstream version 4.4.3 (#1176914)
+
 * Wed Dec 17 2014 Jan Kaluza <jkaluza@redhat.com> - 4.4.1-1
 - update to new upstream version 4.4.1 (#1170994)
 
