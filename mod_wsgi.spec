@@ -12,7 +12,7 @@
 %endif
 
 Name:           mod_wsgi
-Version:        4.4.3
+Version:        4.4.8
 Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
@@ -117,6 +117,10 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Thu Feb 12 2015 Richard W.M. Jones <rjones@redhat.com> - 4.4.8-1
+- Upstream to 4.4.8.
+- This version includes the fix for the segfault described in RHBZ#1178851.
+
 * Mon Jan  5 2015 Jakub Dorňák <jdornak@redhat.com> - 4.4.3-1
 - update to new upstream version 4.4.3 (#1176914)
 
