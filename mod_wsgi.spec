@@ -13,7 +13,7 @@
 
 Name:           mod_wsgi
 Version:        4.4.8
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -117,6 +117,9 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.4.8-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Thu Feb 12 2015 Richard W.M. Jones <rjones@redhat.com> - 4.4.8-1
 - Upstream to 4.4.8.
 - This version includes the fix for the segfault described in RHBZ#1178851.
