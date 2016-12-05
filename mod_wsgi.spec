@@ -1,4 +1,5 @@
 %{!?_httpd_apxs: %{expand: %%global _httpd_apxs %%{_sbindir}/apxs}}
+
 %{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo 0-0)}}
 %{!?_httpd_confdir:    %{expand: %%global _httpd_confdir    %%{_sysconfdir}/httpd/conf.d}}
 # /etc/httpd/conf.d with httpd < 2.4 and defined as /etc/httpd/conf.modules.d with httpd >= 2.4
@@ -8,24 +9,23 @@
 %if 0%{?fedora} > 12
 %global with_python3 1
 %else
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
+%global with_python3 0
 %endif
 
 Name:           mod_wsgi
-Version:        4.4.8
-Release:        4%{?dist}
+Version:        4.5.9
+Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
-URL:            http://modwsgi.org
-Source0:        http://github.srcurl.net/GrahamDumpleton/%{name}/%{version}/%{name}-%{version}.tar.gz
+URL:            https://modwsgi.readthedocs.io
+Source0:        https://files.pythonhosted.org/packages/source/m/%{name}/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
 Source2:        wsgi-python3.conf
 
-BuildRequires:  httpd-devel, python-devel, autoconf
-%if 0%{?with_python3}
-BuildRequires:  python3-devel
-%endif
+BuildRequires:  httpd-devel
+BuildRequires:  python-devel
+BuildRequires:  autoconf
 Requires:       httpd-mmn = %{_httpd_mmn}
 
 # Suppress auto-provides for module DSO
@@ -33,18 +33,20 @@ Requires:       httpd-mmn = %{_httpd_mmn}
 %{?filter_setup}
 
 
-%if 0%{?with_python3}
+%if 0%{?with_python3} > 0
 %package -n python3-%{name}
 Summary:        A WSGI interface for Python3 web applications in Apache
 Group:          System Environment/Libraries
 Requires:       httpd-mmn = %{_httpd_mmn}
+BuildRequires:  python3-devel
 
 %description -n python3-%{name}
 The mod_wsgi adapter is an Apacheache module that provides a WSGI compliant
 interface for hosting Python based web applications within Apache. The
-adapter is writtentten completely in C code against the Apache C runtime and
+adapter is written completely in C code against the Apache C runtime and
 for hosting WSGI applications within Apache has a lower overhead than using
 existing WSGI adapters for mod_python or CGI.
+
 %endif
 
 %description
@@ -58,7 +60,7 @@ existing WSGI adapters for mod_python or CGI.
 %prep
 %setup -qn %{name}-%{version}
 
-%if 0%{?with_python3}
+%if 0%{?with_python3} > 0
 cp -a . %{py3dir}
 %endif
 
@@ -68,7 +70,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 %configure --enable-shared --with-apxs=%{_httpd_apxs}
 make %{?_smp_mflags}
 
-%if 0%{?with_python3}
+%if 0%{?with_python3} > 0
 pushd %{py3dir}
 %configure --enable-shared --with-apxs=%{_httpd_apxs} --with-python=python3
 make %{?_smp_mflags}
@@ -77,39 +79,31 @@ popd
 
 %install
 # first install python3 variant and rename the so file
-%if 0%{?with_python3}
+%if 0%{?with_python3} > 0
+
 pushd %{py3dir}
 make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
 mv  $RPM_BUILD_ROOT%{_httpd_moddir}/mod_wsgi{,_python3}.so
 
 install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
-%if "%{_httpd_modconfdir}" == "%{_httpd_confdir}"
-# httpd <= 2.2.x
-install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_httpd_confdir}/wsgi-python3.conf
-%else
 # httpd >= 2.4.x
 install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi-python3.conf
-%endif
 popd
+
 %endif
 
 make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
 
 install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
-%if "%{_httpd_modconfdir}" == "%{_httpd_confdir}"
-# httpd <= 2.2.x
-install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_confdir}/wsgi.conf
-%else
 # httpd >= 2.4.x
 install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
-%endif
 
 %files
 %doc LICENSE README.rst
 %config(noreplace) %{_httpd_modconfdir}/*wsgi.conf
 %{_httpd_moddir}/mod_wsgi.so
 
-%if 0%{?with_python3}
+%if 0%{?with_python3} > 0
 %files -n python3-%{name}
 %doc LICENSE README.rst
 %config(noreplace) %{_httpd_modconfdir}/*wsgi-python3.conf
@@ -117,6 +111,9 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Mon Dec 05 2016 Matthias Runge <mrunge@redhat.com> - 4.5.9-1
+- upgrade to 4.5.9 (rhbz#1180445)
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 4.4.8-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
