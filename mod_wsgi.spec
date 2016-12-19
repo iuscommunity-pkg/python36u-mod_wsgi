@@ -14,7 +14,7 @@
 
 Name:           mod_wsgi
 Version:        4.5.9
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -111,6 +111,9 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Mon Dec 19 2016 Miro Hrončok <mhroncok@redhat.com> - 4.5.9-2
+- Rebuild for Python 3.6
+
 * Mon Dec 05 2016 Matthias Runge <mrunge@redhat.com> - 4.5.9-1
 - upgrade to 4.5.9 (rhbz#1180445)
 
