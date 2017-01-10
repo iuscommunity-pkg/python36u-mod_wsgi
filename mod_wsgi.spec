@@ -111,6 +111,9 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 %endif
 
 %changelog
+* Tue Jan 10 2017 Jakub Dorňák <jakub.dornak@misli.cz> - 4.5.13-1
+- Update to 4.5.13
+
 * Mon Dec 19 2016 Miro Hrončok <mhroncok@redhat.com> - 4.5.9-2
 - Rebuild for Python 3.6
 
