@@ -13,8 +13,8 @@
 %endif
 
 Name:           mod_wsgi
-Version:        4.5.9
-Release:        2%{?dist}
+Version:        4.5.13
+Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
