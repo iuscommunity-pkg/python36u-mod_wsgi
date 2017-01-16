@@ -18,7 +18,7 @@ Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
-URL:            https://modwsgi.readthedocs.io
+URL:            https://modwsgi.readthedocs.io/
 Source0:        https://files.pythonhosted.org/packages/source/m/%{name}/%{name}-%{version}.tar.gz
 Source1:        wsgi.conf
 Source2:        wsgi-python3.conf
@@ -99,13 +99,13 @@ install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
 install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 
 %files
-%doc LICENSE README.rst
+%doc LICENSE CREDITS.rst README.rst
 %config(noreplace) %{_httpd_modconfdir}/*wsgi.conf
 %{_httpd_moddir}/mod_wsgi.so
 
 %if 0%{?with_python3} > 0
 %files -n python3-%{name}
-%doc LICENSE README.rst
+%doc LICENSE CREDITS.rst README.rst
 %config(noreplace) %{_httpd_modconfdir}/*wsgi-python3.conf
 %{_httpd_moddir}/mod_wsgi_python3.so
 %endif
