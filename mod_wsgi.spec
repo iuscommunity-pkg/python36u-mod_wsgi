@@ -14,7 +14,7 @@
 
 Name:           mod_wsgi
 Version:        4.5.13
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
@@ -99,13 +99,15 @@ install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
 install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 
 %files
-%doc LICENSE CREDITS.rst README.rst
+%license LICENSE
+%doc CREDITS.rst README.rst
 %config(noreplace) %{_httpd_modconfdir}/*wsgi.conf
 %{_httpd_moddir}/mod_wsgi.so
 
 %if 0%{?with_python3} > 0
 %files -n python3-%{name}
-%doc LICENSE CREDITS.rst README.rst
+%license LICENSE
+%doc CREDITS.rst README.rst
 %config(noreplace) %{_httpd_modconfdir}/*wsgi-python3.conf
 %{_httpd_moddir}/mod_wsgi_python3.so
 %endif
