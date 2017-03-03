@@ -1,3 +1,9 @@
+# IUS spec file for python36u-mod_wsgi, forked from Fedora
+
+%global real_name mod_wsgi
+%global python python3.6
+%global ius_python python36u
+
 %{!?_httpd_apxs: %{expand: %%global _httpd_apxs %%{_sbindir}/apxs}}
 
 %{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo 0-0)}}
@@ -6,48 +12,26 @@
 %{!?_httpd_modconfdir: %{expand: %%global _httpd_modconfdir %%{_sysconfdir}/httpd/conf.d}}
 %{!?_httpd_moddir:    %{expand: %%global _httpd_moddir    %%{_libdir}/httpd/modules}}
 
-%if 0%{?fedora} > 12
-%global with_python3 1
-%else
-%global with_python3 0
-%endif
-
-Name:           mod_wsgi
-Version:        4.5.13
-Release:        3%{?dist}
+Name:           %{ius_python}-mod_wsgi
+Version:        4.5.14
+Release:        1.ius%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
 URL:            https://modwsgi.readthedocs.io/
-Source0:        https://files.pythonhosted.org/packages/source/m/%{name}/%{name}-%{version}.tar.gz
+Source0:        https://files.pythonhosted.org/packages/source/m/%{real_name}/%{real_name}-%{version}.tar.gz
 Source1:        wsgi.conf
-Source2:        wsgi-python3.conf
 
-BuildRequires:  httpd-devel
-BuildRequires:  python-devel
+BuildRequires:  httpd-devel < 2.4.10
+BuildRequires:  %{ius_python}-devel
 BuildRequires:  autoconf
 Requires:       httpd-mmn = %{_httpd_mmn}
+
+Provides: %{real_name} = %{version}
 
 # Suppress auto-provides for module DSO
 %{?filter_provides_in: %filter_provides_in %{_httpd_moddir}/.*\.so$}
 %{?filter_setup}
-
-
-%if 0%{?with_python3} > 0
-%package -n python3-%{name}
-Summary:        A WSGI interface for Python3 web applications in Apache
-Group:          System Environment/Libraries
-Requires:       httpd-mmn = %{_httpd_mmn}
-BuildRequires:  python3-devel
-
-%description -n python3-%{name}
-The mod_wsgi adapter is an Apacheache module that provides a WSGI compliant
-interface for hosting Python based web applications within Apache. The
-adapter is written completely in C code against the Apache C runtime and
-for hosting WSGI applications within Apache has a lower overhead than using
-existing WSGI adapters for mod_python or CGI.
-
-%endif
 
 %description
 The mod_wsgi adapter is an Apache module that provides a WSGI compliant
@@ -58,61 +42,38 @@ existing WSGI adapters for mod_python or CGI.
 
 
 %prep
-%setup -qn %{name}-%{version}
-
-%if 0%{?with_python3} > 0
-cp -a . %{py3dir}
-%endif
+%setup -qn %{real_name}-%{version}
 
 %build
 export LDFLAGS="$RPM_LD_FLAGS -L%{_libdir}"
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
-%configure --enable-shared --with-apxs=%{_httpd_apxs}
+%configure --enable-shared --with-apxs=%{_httpd_apxs} --with-python=%{_bindir}/%{python}
 make %{?_smp_mflags}
-
-%if 0%{?with_python3} > 0
-pushd %{py3dir}
-%configure --enable-shared --with-apxs=%{_httpd_apxs} --with-python=python3
-make %{?_smp_mflags}
-popd
-%endif
 
 %install
-# first install python3 variant and rename the so file
-%if 0%{?with_python3} > 0
-
-pushd %{py3dir}
 make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
-mv  $RPM_BUILD_ROOT%{_httpd_moddir}/mod_wsgi{,_python3}.so
+mv  $RPM_BUILD_ROOT%{_httpd_moddir}/mod_wsgi{,_%{python}}.so
 
-install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
+%if "%{_httpd_modconfdir}" == "%{_httpd_confdir}"
+# httpd <= 2.2.x
+install -Dpm 644 %{SOURCE0} $RPM_BUILD_ROOT%{_httpd_modconfdir}/wsgi-%{python}.conf
+%else
 # httpd >= 2.4.x
-install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi-python3.conf
-popd
-
+install -Dpm 644 %{SOURCE0} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi-%{python}.conf
 %endif
-
-make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
-
-install -d -m 755 $RPM_BUILD_ROOT%{_httpd_modconfdir}
-# httpd >= 2.4.x
-install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi.conf
 
 %files
 %license LICENSE
 %doc CREDITS.rst README.rst
-%config(noreplace) %{_httpd_modconfdir}/*wsgi.conf
-%{_httpd_moddir}/mod_wsgi.so
+%config(noreplace) %{_httpd_modconfdir}/*wsgi*.conf
+%{_httpd_moddir}/mod_wsgi_%{python}.so
 
-%if 0%{?with_python3} > 0
-%files -n python3-%{name}
-%license LICENSE
-%doc CREDITS.rst README.rst
-%config(noreplace) %{_httpd_modconfdir}/*wsgi-python3.conf
-%{_httpd_moddir}/mod_wsgi_python3.so
-%endif
 
 %changelog
+* Fri Mar 03 2017 Ben Harper <ben.harper@rackspace.com> - 4.5.14-1.ius
+- Latest upstream
+- Port from Fedora to IUS
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4.5.13-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
