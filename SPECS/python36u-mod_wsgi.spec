@@ -4,14 +4,6 @@
 %global python python3.6
 %global ius_python python36u
 
-%{!?_httpd_apxs: %{expand: %%global _httpd_apxs %%{_sbindir}/apxs}}
-
-%{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo 0-0)}}
-%{!?_httpd_confdir:    %{expand: %%global _httpd_confdir    %%{_sysconfdir}/httpd/conf.d}}
-# /etc/httpd/conf.d with httpd < 2.4 and defined as /etc/httpd/conf.modules.d with httpd >= 2.4
-%{!?_httpd_modconfdir: %{expand: %%global _httpd_modconfdir %%{_sysconfdir}/httpd/conf.d}}
-%{!?_httpd_moddir:    %{expand: %%global _httpd_moddir    %%{_libdir}/httpd/modules}}
-
 Name:           %{ius_python}-mod_wsgi
 Version:        4.5.14
 Release:        2.ius%{?dist}
@@ -49,9 +41,10 @@ export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 %configure --enable-shared --with-apxs=%{_httpd_apxs} --with-python=%{_bindir}/%{python}
 make %{?_smp_mflags}
 
+
 %install
-make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
-mv  $RPM_BUILD_ROOT%{_httpd_moddir}/mod_wsgi{,_%{python}}.so
+make install DESTDIR=%{buildroot} LIBEXECDIR=%{_httpd_moddir}
+mv %{buildroot}%{_httpd_moddir}/mod_wsgi{,_%{python}}.so
 
 cat > wsgi.conf << EOF
 # NOTE:
@@ -62,18 +55,14 @@ cat > wsgi.conf << EOF
 </IfModule>
 EOF
 
-%if "%{_httpd_modconfdir}" == "%{_httpd_confdir}"
-# httpd <= 2.2.x
-install -Dpm 644 wsgi.conf $RPM_BUILD_ROOT%{_httpd_modconfdir}/wsgi-%{python}.conf
-%else
 # httpd >= 2.4.x
-install -Dpm 644 wsgi.conf $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi-%{python}.conf
-%endif
+install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_modconfdir}/10-wsgi-%{python}.conf
+
 
 %files
 %license LICENSE
 %doc CREDITS.rst README.rst
-%config(noreplace) %{_httpd_modconfdir}/*wsgi*.conf
+%config(noreplace) %{_httpd_modconfdir}/10-wsgi-%{python}.conf
 %{_httpd_moddir}/mod_wsgi_%{python}.so
 
 
