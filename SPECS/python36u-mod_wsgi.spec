@@ -14,13 +14,12 @@
 
 Name:           %{ius_python}-mod_wsgi
 Version:        4.5.14
-Release:        1.ius%{?dist}
+Release:        2.ius%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
 License:        ASL 2.0
 URL:            https://modwsgi.readthedocs.io/
 Source0:        https://files.pythonhosted.org/packages/source/m/%{real_name}/%{real_name}-%{version}.tar.gz
-Source1:        wsgi.conf
 
 BuildRequires:  httpd-devel < 2.4.10
 BuildRequires:  %{ius_python}-devel
@@ -54,12 +53,21 @@ make %{?_smp_mflags}
 make install DESTDIR=$RPM_BUILD_ROOT LIBEXECDIR=%{_httpd_moddir}
 mv  $RPM_BUILD_ROOT%{_httpd_moddir}/mod_wsgi{,_%{python}}.so
 
+cat > wsgi.conf << EOF
+# NOTE:
+# Only one mod_wsgi can be loaded at a time.
+# Don't attempt to load if already loaded.
+<IfModule !wsgi_module>
+    LoadModule wsgi_module modules/mod_wsgi_%{python}.so
+</IfModule>
+EOF
+
 %if "%{_httpd_modconfdir}" == "%{_httpd_confdir}"
 # httpd <= 2.2.x
-install -Dpm 644 %{SOURCE0} $RPM_BUILD_ROOT%{_httpd_modconfdir}/wsgi-%{python}.conf
+install -Dpm 644 wsgi.conf $RPM_BUILD_ROOT%{_httpd_modconfdir}/wsgi-%{python}.conf
 %else
 # httpd >= 2.4.x
-install -Dpm 644 %{SOURCE0} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi-%{python}.conf
+install -Dpm 644 wsgi.conf $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi-%{python}.conf
 %endif
 
 %files
@@ -70,6 +78,9 @@ install -Dpm 644 %{SOURCE0} $RPM_BUILD_ROOT%{_httpd_modconfdir}/10-wsgi-%{python
 
 
 %changelog
+* Fri Mar 10 2017 Carl George <carl.george@rackspace.com> - 4.5.14-2.ius
+- Generate configuration file in spec 
+
 * Fri Mar 03 2017 Ben Harper <ben.harper@rackspace.com> - 4.5.14-1.ius
 - Latest upstream
 - Port from Fedora to IUS
