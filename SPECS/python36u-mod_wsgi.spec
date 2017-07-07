@@ -4,6 +4,13 @@
 %global python python3.6
 %global ius_python python36u
 
+%{!?_httpd_apxs: %{expand: %%global _httpd_apxs %%{_sbindir}/apxs}}
+%{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo 0-0)}}
+%{!?_httpd_confdir:    %{expand: %%global _httpd_confdir    %%{_sysconfdir}/httpd/conf.d}}
+# /etc/httpd/conf.d with httpd < 2.4 and defined as /etc/httpd/conf.modules.d with httpd >= 2.4
+%{!?_httpd_modconfdir: %{expand: %%global _httpd_modconfdir %%{_sysconfdir}/httpd/conf.d}}
+%{!?_httpd_moddir:    %{expand: %%global _httpd_moddir    %%{_libdir}/httpd/modules}}
+
 Name:           %{ius_python}-mod_wsgi
 Version:        4.5.17
 Release:        1.ius%{?dist}
@@ -55,20 +62,27 @@ cat > wsgi.conf << EOF
 </IfModule>
 EOF
 
+%if "%{_httpd_modconfdir}" == "%{_httpd_confdir}"
+# httpd <= 2.2.x
+install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_confdir}/wsgi-%{python}.conf
+%else
 # httpd >= 2.4.x
 install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_modconfdir}/10-wsgi-%{python}.conf
+%endif
 
 
 %files
+%{!?_licensedir:%global license %%doc}
 %license LICENSE
 %doc CREDITS.rst README.rst
-%config(noreplace) %{_httpd_modconfdir}/10-wsgi-%{python}.conf
+%config(noreplace) %{_httpd_modconfdir}/*wsgi-%{python}.conf
 %{_httpd_moddir}/mod_wsgi_%{python}.so
 
 
 %changelog
 * Fri Jul 07 2017 Ben Harper <ben.harper@rackspace.com> - 4.5.17-1.ius
 - Latest upstream
+- add EL6 support
 
 * Fri Mar 24 2017 Ben Harper <ben.harper@rackspace.com> - 4.5.15-1.ius
 - Latest upstream
