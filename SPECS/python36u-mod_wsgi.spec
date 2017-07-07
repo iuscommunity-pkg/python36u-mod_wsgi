@@ -5,7 +5,7 @@
 %global ius_python python36u
 
 Name:           %{ius_python}-mod_wsgi
-Version:        4.5.15
+Version:        4.5.17
 Release:        1.ius%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 Group:          System Environment/Libraries
@@ -67,6 +67,9 @@ install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_modconfdir}/10-wsgi-%{python}.co
 
 
 %changelog
+* Fri Jul 07 2017 Ben Harper <ben.harper@rackspace.com> - 4.5.17-1.ius
+- Latest upstream
+
 * Fri Mar 24 2017 Ben Harper <ben.harper@rackspace.com> - 4.5.15-1.ius
 - Latest upstream
 
