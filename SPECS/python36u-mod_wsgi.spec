@@ -11,14 +11,16 @@
 %{!?_httpd_moddir:    %{expand: %%global _httpd_moddir    %%{_libdir}/httpd/modules}}
 
 Name:           %{python}-%{srcname}
-Version:        4.5.21
+Version:        4.5.24
 Release:        1.ius%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 License:        ASL 2.0
 URL:            https://modwsgi.readthedocs.io/
-Source0:        https://files.pythonhosted.org/packages/source/m/mod_wsgi/mod_wsgi-%{version}.tar.gz
+Source0:        https://github.com/GrahamDumpleton/mod_wsgi/archive/%{version}.tar.gz#/mod_wsgi-%{version}.tar.gz
 BuildRequires:  httpd-devel < 2.4.10
 BuildRequires:  %{python}-devel
+BuildRequires:  %{python}-setuptools
+Requires:       %{python}-setuptools
 Requires:       httpd-mmn = %{_httpd_mmn}
 Provides:       %{srcname} = %{version}
 
@@ -44,6 +46,7 @@ export LDFLAGS="$RPM_LD_FLAGS -L%{_libdir}"
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 %configure --enable-shared --with-apxs=%{_httpd_apxs} --with-python=%{__python36}
 make %{?_smp_mflags}
+%{py36_build}
 
 
 %install
@@ -67,15 +70,26 @@ install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_confdir}/wsgi-python%{python36_v
 install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_modconfdir}/10-wsgi-python%{python36_version}.conf
 %endif
 
+%{py36_install}
 
 %files
 %license LICENSE
 %doc CREDITS.rst README.rst
 %config(noreplace) %{_httpd_modconfdir}/*wsgi-python%{python36_version}.conf
 %{_httpd_moddir}/mod_wsgi_python%{python36_version}.so
+%{python36_sitearch}/mod_wsgi-*.egg-info
+%{python36_sitearch}/mod_wsgi
+%{_bindir}/mod_wsgi-express
 
 
 %changelog
+* Fri Dec 15 2017 Ben Harper <ben.harper@rackspace.com> - 4.5.24-1.ius
+- Latest upstream
+- update URL from Fedora:
+  https://src.fedoraproject.org/rpms/mod_wsgi/c/5585f33d82e1f027384d70df753b545ac7ab36de
+- build mod_wsgi-express from Fedora:
+  https://src.fedoraproject.org/rpms/mod_wsgi/c/241a680c246d91f55a733aa1f45a480697c28ff4
+
 * Thu Nov 16 2017 Carl George <carl@george.computer> - 4.5.21-1.ius
 - Latest upstream
 
