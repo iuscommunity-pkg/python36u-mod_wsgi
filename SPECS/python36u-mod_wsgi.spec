@@ -11,7 +11,7 @@
 %{!?_httpd_moddir:    %{expand: %%global _httpd_moddir    %%{_libdir}/httpd/modules}}
 
 Name:           %{python}-%{srcname}
-Version:        4.6.2
+Version:        4.6.5
 Release:        1.ius%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 License:        ASL 2.0
@@ -84,6 +84,9 @@ install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_modconfdir}/10-wsgi-python%{pyth
 
 
 %changelog
+* Thu Apr 25 2019 evitalis <evitalis@users.noreply.github.com> - 4.6.5-1.ius
+- Latest upstream
+
 * Tue Mar 06 2018 Ben Harper <ben.harper@rackspace.com> - 4.6.2-1.ius
 - Latest upstream
 - add Patch1, adapted from Fedora:
