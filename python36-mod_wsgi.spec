@@ -25,7 +25,6 @@ Patch0:         mod_wsgi-4.6.2-exports.patch
 BuildRequires:  httpd-devel < 2.4.10
 BuildRequires:  %{python}-devel
 BuildRequires:  %{python}-setuptools
-Requires:       %{python}-setuptools
 Requires:       httpd-mmn = %{_httpd_mmn}
 Provides:       %{srcname} = %{version}
 
@@ -96,6 +95,7 @@ install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_modconfdir}/10-wsgi-python%{pyth
 * Fri Sep 20 2019 Carl George <carl@george.computer> - 4.6.2-2
 - Rename to python36-mod_wsgi
 - Switch to EPEL python3 macros
+- Remove incorrect setuptools requirement
 
 * Tue Mar 06 2018 Ben Harper <ben.harper@rackspace.com> - 4.6.2-1.ius
 - Latest upstream
