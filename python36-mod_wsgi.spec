@@ -3,6 +3,10 @@
 %global srcname mod_wsgi
 %global python python36
 
+%if %{defined el6}
+%global __python3 /usr/bin/python3.6
+%endif
+
 %{!?_httpd_apxs: %{expand: %%global _httpd_apxs %%{_sbindir}/apxs}}
 %{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo 0-0)}}
 %{!?_httpd_confdir:    %{expand: %%global _httpd_confdir    %%{_sysconfdir}/httpd/conf.d}}
@@ -50,47 +54,48 @@ existing WSGI adapters for mod_python or CGI.
 %build
 export LDFLAGS="$RPM_LD_FLAGS -L%{_libdir}"
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
-%configure --enable-shared --with-apxs=%{_httpd_apxs} --with-python=%{__python36}
+%configure --enable-shared --with-apxs=%{_httpd_apxs} --with-python=%{__python3}
 make %{?_smp_mflags}
-%{py36_build}
+%py3_build
 
 
 %install
 make install DESTDIR=%{buildroot} LIBEXECDIR=%{_httpd_moddir}
-mv %{buildroot}%{_httpd_moddir}/mod_wsgi{,_python%{python36_version}}.so
+mv %{buildroot}%{_httpd_moddir}/mod_wsgi{,_python%{python3_version}}.so
 
 cat > wsgi.conf << EOF
 # NOTE:
 # Only one mod_wsgi can be loaded at a time.
 # Don't attempt to load if already loaded.
 <IfModule !wsgi_module>
-    LoadModule wsgi_module modules/mod_wsgi_python%{python36_version}.so
+    LoadModule wsgi_module modules/mod_wsgi_python%{python3_version}.so
 </IfModule>
 EOF
 
 %if "%{_httpd_modconfdir}" == "%{_httpd_confdir}"
 # httpd <= 2.2.x
-install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_confdir}/wsgi-python%{python36_version}.conf
+install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_confdir}/wsgi-python%{python3_version}.conf
 %else
 # httpd >= 2.4.x
-install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_modconfdir}/10-wsgi-python%{python36_version}.conf
+install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_modconfdir}/10-wsgi-python%{python3_version}.conf
 %endif
 
-%{py36_install}
+%py3_install
 
 %files
 %license LICENSE
 %doc CREDITS.rst README.rst
-%config(noreplace) %{_httpd_modconfdir}/*wsgi-python%{python36_version}.conf
-%{_httpd_moddir}/mod_wsgi_python%{python36_version}.so
-%{python36_sitearch}/mod_wsgi-*.egg-info
-%{python36_sitearch}/mod_wsgi
+%config(noreplace) %{_httpd_modconfdir}/*wsgi-python%{python3_version}.conf
+%{_httpd_moddir}/mod_wsgi_python%{python3_version}.so
+%{python3_sitearch}/mod_wsgi-*.egg-info
+%{python3_sitearch}/mod_wsgi
 %{_bindir}/mod_wsgi-express
 
 
 %changelog
 * Fri Sep 20 2019 Carl George <carl@george.computer> - 4.6.2-2
 - Rename to python36-mod_wsgi
+- Switch to EPEL python3 macros
 
 * Tue Mar 06 2018 Ben Harper <ben.harper@rackspace.com> - 4.6.2-1.ius
 - Latest upstream
