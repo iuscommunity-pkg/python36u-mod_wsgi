@@ -1,7 +1,7 @@
 # IUS spec file for python36u-mod_wsgi, forked from Fedora
 
 %global srcname mod_wsgi
-%global python python36u
+%global python python36
 
 %{!?_httpd_apxs: %{expand: %%global _httpd_apxs %%{_sbindir}/apxs}}
 %{!?_httpd_mmn: %{expand: %%global _httpd_mmn %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo 0-0)}}
@@ -12,7 +12,7 @@
 
 Name:           %{python}-%{srcname}
 Version:        4.6.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 License:        ASL 2.0
 URL:            https://modwsgi.readthedocs.io/
@@ -24,6 +24,11 @@ BuildRequires:  %{python}-setuptools
 Requires:       %{python}-setuptools
 Requires:       httpd-mmn = %{_httpd_mmn}
 Provides:       %{srcname} = %{version}
+
+# Rename from python36u-mod_wsgi
+Provides:       python36u-mod_wsgi = %{version}-%{release}
+Provides:       python36u-mod_wsgi%{?_isa} = %{version}-%{release}
+Obsoletes:      python36u-mod_wsgi < 4.6.2-2
 
 # Suppress auto-provides for module DSO
 %{?filter_provides_in: %filter_provides_in %{_httpd_moddir}/.*\.so$}
@@ -84,6 +89,9 @@ install -Dpm 644 wsgi.conf %{buildroot}%{_httpd_modconfdir}/10-wsgi-python%{pyth
 
 
 %changelog
+* Fri Sep 20 2019 Carl George <carl@george.computer> - 4.6.2-2
+- Rename to python36-mod_wsgi
+
 * Tue Mar 06 2018 Ben Harper <ben.harper@rackspace.com> - 4.6.2-1.ius
 - Latest upstream
 - add Patch1, adapted from Fedora:
