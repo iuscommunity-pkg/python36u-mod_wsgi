@@ -12,7 +12,7 @@
 
 Name:           %{python}-%{srcname}
 Version:        4.6.2
-Release:        1.ius%{?dist}
+Release:        1%{?dist}
 Summary:        A WSGI interface for Python web applications in Apache
 License:        ASL 2.0
 URL:            https://modwsgi.readthedocs.io/
